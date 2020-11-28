@@ -1,2 +1,3 @@
-# flashcard-app
-This is simple Flashcard app. 
+# Flashcard-app
+This is simple Flashcard app
+# Note
