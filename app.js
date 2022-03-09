@@ -1,12 +1,12 @@
 //Flashcard costructor
-function Flashcard(question, answer, flashcardId) {
+function Flashcard(question, answer) {
   (this.question = question),
     (this.answer = answer),
     (this.flashcardId = Math.floor(Math.random() * 10000));
 }
 
-//UI consturctor
-function UI() {}
+//UI constructor
+function UI() { }
 
 //add flashcard to list
 UI.prototype.addFlashcardToList = function (flashcard) {
@@ -22,7 +22,7 @@ UI.prototype.addFlashcardToList = function (flashcard) {
                           href="#"
                           id="edit-flashcard"
                           class="btn btn-outline-primary my-1 edit-flashcard delete-flashcard text-uppercase"
-                          data-id=""
+                          data-id= ${flashcard.flashcardId}
                           >edit</a>
                       <a
                           href="#"
@@ -53,21 +53,17 @@ function close() {
 //hide and show
 UI.prototype.showAndHide = function (element) {
   const answerQuestion = element.parentElement.children[2];
-  if (answerQuestion.classList.contains("hide")) {
-    answerQuestion.classList.remove("hide");
-  } else {
-    answerQuestion.classList.add("hide");
-  }
+  answerQuestion.classList.toggle("hide");
 };
 
 //clear controls from textarea
 UI.prototype.clearControls = function () {
-  const text1 = (document.getElementById("Textarea1").value = "");
-  const text2 = (document.getElementById("Textarea2").value = "");
+  document.getElementById("Textarea1").value = "";
+  document.getElementById("Textarea2").value = "";
 };
 
 //delete
-UI.prototype.deleteFlasCard = function (element) {
+UI.prototype.deleteFlashCard = function (element) {
   if (element.classList.contains("delete-flashcard")) {
     element.parentElement.parentElement.parentElement.remove();
     return true;
@@ -78,8 +74,8 @@ UI.prototype.deleteFlasCard = function (element) {
 UI.prototype.editFlashcard = function (element) {
   let question = element.parentElement.parentElement.children[0].innerHTML;
   let answer = element.parentElement.parentElement.children[2].innerHTML;
-  const text1 = (document.getElementById("Textarea1").value = question);
-  const text2 = (document.getElementById("Textarea2").value = answer);
+  document.getElementById("Textarea1").value = question;
+  document.getElementById("Textarea2").value = answer;
 };
 
 //show alert prototype
@@ -95,7 +91,7 @@ UI.prototype.showAlert = function (message, className) {
 
   setTimeout(() => {
     document.querySelector(".alert").remove();
-  }, 3000);
+  }, 2000);
 };
 
 //main save function
@@ -128,21 +124,18 @@ document.getElementById("save").addEventListener("click", (e) => {
 document.getElementById("questions-list").addEventListener("click", (e) => {
   const ui = new UI();
 
-  // ui.deleteFlasCard(e.target);
-  if (ui.deleteFlasCard(e.target) == true) {
+  // ui.deleteFlashCard(e.target);
+  if (ui.deleteFlashCard(e.target) == true) {
     // delete from LS
-    Storage.deleteFlasCard(e.target);
+    Storage.deleteFlashCard(e.target);
     ui.showAlert("The flashcard has been deleted", "danger");
   }
   if (e.target.classList.contains("show-answer")) {
     ui.showAndHide(e.target);
   }
-  if (
-    e.target.classList.contains("edit-flashcard") &&
-    e.target.classList.contains("delete-flashcard")
-  ) {
+  if (e.target.classList.contains("edit-flashcard")) {
     ui.editFlashcard(e.target);
-    ui.deleteFlasCard(e.target);
+    Storage.deleteFlashCard(e.target)
   }
   e.preventDefault();
 });
@@ -174,10 +167,10 @@ class Storage {
     localStorage.setItem("flashcards", JSON.stringify(flashcards));
   }
 
-  static deleteFlasCard(element) {
+  static deleteFlashCard(element) {
     if (element.classList.contains("delete-flashcard")) {
       const id = element.getAttribute("data-id");
-
+      console.log(id);
       const flashcards = Storage.getFlashcards();
 
       flashcards.forEach((flashcard, index) => {
